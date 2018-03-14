@@ -110,32 +110,32 @@ class FontMetric:
         self.missingGlyph = self.chardata.get(ord(u' ')) or self.chardata.get(0xA0)
    
     def dump(self):
-        print "FontName: ", self.fontname
-        print "FullName: ", self.fullname
-        print "FontFamily: ", self.family
-        print "Weight: ", self.weight
-        print "FontBBox: ", 
+        print("FontName: ", self.fontname)
+        print("FullName: ", self.fullname)
+        print("FontFamily: ", self.family)
+        print("Weight: ", self.weight)
+        print("FontBBox: ", )
         for x in self.bbox:
-            print x,
-        print            
-        print "CapHeight: ", self.capheight
-        print "XHeight: ", self.xheight
-        print "Ascender: ", self.ascender
-        print "Descender: ", self.descender
-        print "StdHW: ", self.stdhw
-        print "StdVW: ", self.stdvw
-        print "UnderlinePosition: ", self.underlineposition
-        print "UnderlineThickness: ", self.underlinethickness
-        print "ItalicAngle: ", self.italicangle
-        print "CharWidth: ", self.charwidth
-        print "MathematicalBaseline: ", self.axisposition
-        print "Character data: "
+            print(x,)
+        print("")
+        print("CapHeight: ", self.capheight)
+        print("XHeight: ", self.xheight)
+        print("Ascender: ", self.ascender)
+        print("Descender: ", self.descender)
+        print("StdHW: ", self.stdhw)
+        print("StdVW: ", self.stdvw)
+        print("UnderlinePosition: ", self.underlineposition)
+        print("UnderlineThickness: ", self.underlinethickness)
+        print("ItalicAngle: ", self.italicangle)
+        print("CharWidth: ", self.charwidth)
+        print("MathematicalBaseline: ", self.axisposition)
+        print("Character data: ")
         chars = self.chardata.items()
         chars.sort(key = lambda c: c[0])
         for i, cm in chars:
             if cm is None: continue
-            print "    ", ("U+%04X" % i), cm.name+":", "  W", cm.width, "  B",
+            print("    ", ("U+%04X" % i), cm.name+":", "  W", cm.width, "  B",)
             for x in cm.bbox: 
-                print x,
-            print
+                print(x,)
+            print("")
     

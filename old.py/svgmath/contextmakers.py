@@ -4,7 +4,8 @@ The module contains two kinds of methods to set up context:
    - context creators process the context of the current node;
    - child context setters alter the context of a child."""
    
-import sys, mathnode, operators
+import sys
+from . import mathnode, operators
 
 #######################################################################
 #### CONTEXT CREATORS 

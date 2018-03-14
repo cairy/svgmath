@@ -1,11 +1,11 @@
 import sys 
-from metric import FontMetric, CharMetric, FontFormatError 
+from .metric import FontMetric, CharMetric, FontFormatError
 
 def readUnsigned(ff, size): 
     res = 0;
     for c in ff.read(size): 
         res *= 0x100; 
-        res += ord(c)
+        res += c if isinstance(c,int) else ord(c)
     return res
 
 def readSigned(ff, size):
@@ -13,7 +13,7 @@ def readSigned(ff, size):
     if res >= 0x80: res -= 0x100 
     for c in ff.read(size - 1): 
         res *= 0x100; 
-        res += ord(c)
+        res += c if isinstance(c,int) else ord(c)
     return res
 
 def readFixed32(ff):
@@ -41,20 +41,20 @@ class TTFMetric (FontMetric):
         
     def readFontMetrics(self, ff):
         version = ff.read(4)
-        if map(ord, version) == [0, 1, 0, 0]:
+        if list(map(ord, version.decode('utf-8'))) == [0, 1, 0, 0]:
             self.fonttype="TTF"
         elif version == "OTTO":
             # self.fonttype="OTF"
             # At the moment, I cannot parse bbox data out from CFF
-            raise TTFFormatError, "OpenType/CFF fonts are unsupported"
+            raise TTFFormatError("OpenType/CFF fonts are unsupported")
         else:
-            raise TTFFormatError, "Not a TrueType file"
+            raise TTFFormatError("Not a TrueType file")
         
         numTables = readUnsigned(ff, 2)
         tables = {}
         skip(ff, 6)
         for i in range(0, numTables):
-            tag = ff.read(4)
+            tag = ff.read(4).decode('utf-8')
             checksum = readUnsigned(ff, 4)
             offset = readUnsigned(ff, 4)
             length = readUnsigned(ff, 4)
@@ -62,14 +62,14 @@ class TTFMetric (FontMetric):
 
         def switchTable(tableTag):
             if tableTag not in tables.keys():
-                raise TTFFormatError, "Required table "+tableTag+" missing in TrueType file"
+                raise TTFFormatError("Required table "+tableTag+" missing in TrueType file")
             return tables[tableTag]
             
         (offset, length) = switchTable("head")
         ff.seek(offset+12)
         magic = readUnsigned(ff, 4)
         if magic != 0x5F0F3CF5:
-            raise TTFFormatError, "Magic number in 'head' table does not match the spec"
+            raise TTFFormatError("Magic number in 'head' table does not match the spec")
         skip(ff, 2)
         self.unitsPerEm = readUnsigned(ff, 2)
         emScale = 1.0 / self.unitsPerEm
@@ -198,7 +198,7 @@ class TTFMetric (FontMetric):
             encodingScheme = "Symbol"
             subtableOffset = cmapEncodings.get((3, 0))            
             if subtableOffset is None: 
-                raise TTFFormatError, "Cannot use font '%s': no known subtable in 'cmap' table" % self.fullname
+                raise TTFFormatError("Cannot use font '%s': no known subtable in 'cmap' table" % self.fullname)
             else:
                 if self.log:
                     self.log.write("WARNING: font '%s' is a symbolic font - Unicode mapping may be unreliable\n" % self.fullname) 
@@ -207,11 +207,11 @@ class TTFMetric (FontMetric):
 
         tableFormat = readUnsigned(ff, 2)
         if tableFormat != 4:
-            raise TTFFormatError, "Unsupported format in 'cmap' table: %d" % tableFormat
+            raise TTFFormatError("Unsupported format in 'cmap' table: %d" % tableFormat)
         
         subtableLength = readUnsigned(ff, 2)
         skip (ff, 2)
-        segCount = readUnsigned(ff, 2) / 2
+        segCount = readUnsigned(ff, 2) // 2
         skip (ff, 6)
         
         endCounts = []
@@ -232,14 +232,14 @@ class TTFMetric (FontMetric):
             remainingLength += 0x10000 # protection against Adobe's bug
 
         glyphIdArray = []
-        for i in range (0, remainingLength/2): glyphIdArray.append(readUnsigned(ff, 2))
+        for i in range (0, remainingLength//2): glyphIdArray.append(readUnsigned(ff, 2))
 
         for i in range (0, segCount):
             for c in range(startCounts[i], endCounts[i]+1):
                 if c == 0xFFFF: continue
                 gid = 0
                 if rangeOffsets[i]:
-                    idx = c - startCounts[i] + rangeOffsets[i]/2 - (segCount - i)   
+                    idx = c - startCounts[i] + rangeOffsets[i]//2 - (segCount - i)
                     gid = glyphIdArray[idx]
                 else: gid = c + idDeltas[i] 
                 if gid >= 0x10000: gid -= 0x10000
@@ -264,7 +264,7 @@ class TTFMetric (FontMetric):
             for i in range (0, self.numGlyphs+1):
                 glyphIndex.append(readUnsigned(ff, 4))        
         else:
-            raise TTFFormatError, "Invalid indexToLocFormat value (%d) in 'head' table" % str(self.indexToLocFormat)
+            raise TTFFormatError("Invalid indexToLocFormat value (%d) in 'head' table" % str(self.indexToLocFormat))
         
         (offset, length) = switchTable("glyf")
         for i in range (0, self.numGlyphs):
@@ -284,6 +284,6 @@ def main():
     if len (sys.argv) == 2: 
         TTFMetric(sys.argv[1], log=sys.stderr).dump() 
     else:
-        print """Usage: TTF.py <path to TTF file>"""
+        print("""Usage: TTF.py <path to TTF file>""")
 
 if __name__ == "__main__": main()

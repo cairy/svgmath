@@ -1,5 +1,6 @@
 """Drawing methods for MathML elements"""
-import sys, math, mathnode
+import sys, math
+from . import mathnode
 from xml import sax
 from xml.sax import xmlreader
 

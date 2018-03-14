@@ -1,5 +1,6 @@
-import sys, glyphlist
-from metric import FontMetric, CharMetric, FontFormatError 
+import sys
+from . import glyphlist
+from .metric import FontMetric, CharMetric, FontFormatError
 
 def parseLength(s): return 0.001 * float(s)
 
@@ -23,7 +24,7 @@ class AFMMetric (FontMetric):
     def readFontMetrics(self, afmfile):
         line = afmfile.readline()
         if not line.startswith("StartFontMetrics"):
-            raise AFMFormatError, "File is not an AFM file"
+            raise AFMFormatError("File is not an AFM file")
         # TODO: AFM version control    
             
         while True:
@@ -137,6 +138,6 @@ def main():
     if len (sys.argv) == 2: 
         AFMMetric(sys.argv[1], log=sys.stderr).dump() 
     else:
-        print """Usage: AFM.py <path to AFM file>"""
+        print("""Usage: AFM.py <path to AFM file>""")
 
 if __name__ == "__main__": main()

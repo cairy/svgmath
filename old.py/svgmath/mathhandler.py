@@ -3,9 +3,9 @@
 import os
 import sys
 from xml import sax
-from mathnode import MathNode
-from mathconfig import MathConfig
-from nodelocator import NodeLocator
+from .mathnode import MathNode
+from .mathconfig import MathConfig
+from .nodelocator import NodeLocator
 
 # MathML namespace
 MathNS = u"http://www.w3.org/1998/Math/MathML"

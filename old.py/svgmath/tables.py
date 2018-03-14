@@ -1,7 +1,8 @@
 """Table-related formatting functions.
 
 This module contains functions called from measurers.py to format tables."""
-import sys, mathnode
+import sys
+from . import mathnode
 
 def getByIndexOrLast(lst, idx):
     if idx < len(lst): return lst[idx]

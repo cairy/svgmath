@@ -35,7 +35,7 @@ def main():
         glyphList = defaultGlyphList
 
     for entry, value in glyphList.items():
-        print entry, " => ", value 
+        print(entry, " => ", value )
 
 if __name__ == "__main__":
     main()

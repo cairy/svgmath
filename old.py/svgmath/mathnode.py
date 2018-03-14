@@ -1,8 +1,9 @@
 """Main structure class for MathML formatting."""
 
-import sys, contextmakers, measurers, generators 
+import sys
+from . import contextmakers, measurers, generators
 from xml import sax
-from nodelocator import NodeLocator
+from .nodelocator import NodeLocator
 
 
 def isHighSurrogate(ch):

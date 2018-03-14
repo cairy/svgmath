@@ -2,9 +2,9 @@
 
 import os, sys 
 from xml import sax
-from fonts.afm import AFMMetric
-from fonts.ttf import TTFMetric
-from fonts.metric import FontFormatError
+from .fonts.afm import AFMMetric
+from .fonts.ttf import TTFMetric
+from .fonts.metric import FontFormatError
 
 class MathConfig(sax.ContentHandler):
     """Configuration for MathML-to-SVG formatter.
@@ -26,8 +26,8 @@ class MathConfig(sax.ContentHandler):
             parser.setContentHandler(self)
             parser.setFeature(sax.handler.feature_namespaces, 0)
             parser.parse(configfile)
-        except sax.SAXException, xcpt:
-            print "Error parsing configuration file ", configfile, ": ", xcpt.getMessage()
+        except (sax.SAXException) as xcpt:
+            print("Error parsing configuration file ", configfile, ": ", xcpt.getMessage())
             sys.exit(1)
 
     
@@ -66,7 +66,7 @@ class MathConfig(sax.ContentHandler):
                     sys.stderr.write("Bad record in configuration file: font is neither AFM nor TTF\n")
                     sys.stderr.write("Font entry for '%s' ignored\n" % fontfullname)
                     return
-            except FontFormatError, err:
+            except (FontFormatError) as err:
                 sys.stderr.write("Invalid or unsupported file format in '%s': %s\n" % (fontpath, err.message))
                 sys.stderr.write("Font entry for '%s' ignored\n" % fontfullname)
                 return
@@ -121,20 +121,20 @@ def main():
     else:
         config = MathConfig(sys.argv[1])
         
-    print "Options:  verbose =", config.verbose, " debug =", config.debug
-    print "Fonts:"
+    print("Options:  verbose =", config.verbose, " debug =", config.debug)
+    print("Fonts:")
     for (font, metric) in config.fonts.items():
-        print "    ", font, "-->", metric.fontname
-    print "Math variants:"
+        print("    ", font, "-->", metric.fontname)
+    print("Math variants:")
     for (variant, value) in config.variants.items():
-        print "    ", variant, "-->", value
-    print "Defaults:"
+        print("    ", variant, "-->", value)
+    print("Defaults:")
     for (attr, value) in config.defaults.items():
-        print "    ", attr, "=", value
-    print "Operator styling:"
+        print("    ", attr, "=", value)
+    print("Operator styling:")
     for (opname, value) in config.opstyles.items():
-        print "    ", repr(opname), ":", value
-    print "Fallback font families:", config.fallbackFamilies  
+        print("    ", repr(opname), ":", value)
+    print("Fallback font families:", config.fallbackFamilies  )
         
     
 if __name__ == "__main__": main()

@@ -1,5 +1,6 @@
 """Functions to format enclosures around MathML elements."""
-import sys, math, mathnode
+import sys, math
+from . import mathnode
 
 def addRadicalEnclosure(node):
     # The below is full of heuristics

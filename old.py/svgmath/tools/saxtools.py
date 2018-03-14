@@ -1,7 +1,7 @@
 """Miscellaneous SAX-related utilities used in SVGMath"""
 
 from xml.sax import handler
-from codecs import getwriter
+from .bcodecs import getwriter
     
 def escape(data):
     """Escape &, <, and > in a string of data.
@@ -10,7 +10,7 @@ def escape(data):
     with entity replacement stripped off (not needed for generation)."""
 
     # must do ampersand first
-    data = unicode(data)
+    data = str(data)
     data = data.replace(u"&", u"&amp;")
     data = data.replace(u">", u"&gt;")
     data = data.replace(u"<", u"&lt;")
@@ -56,14 +56,14 @@ class XMLGenerator(handler.ContentHandler):
         self._starttag_pending = False
 
     def _write(self, text):
-        self._out.write(unicode(text))
+        self._out.write(text)
 
     def _qname(self, name):
         if name[0]:
             prefix = self._current_context[name[0]]
             if prefix: 
-                return unicode(prefix) + u":" + unicode(name[1])
-        return unicode(name[1])
+                return prefix + u":" + name[1]
+        return name[1]
         
     def _flush_starttag(self):
         if self._starttag_pending:
@@ -73,7 +73,7 @@ class XMLGenerator(handler.ContentHandler):
     # ContentHandler methods
     def startDocument(self):
         self._out.reset()
-        self._write(u'<?xml version="1.0" encoding="%s"?>\n' % unicode(self._encoding))
+        self._write(u'<?xml version="1.0" encoding="%s"?>\n' % self._encoding)
 
     def endDocument(self):
         self._out.reset()
@@ -89,9 +89,9 @@ class XMLGenerator(handler.ContentHandler):
 
     def startElement(self, name, attrs):
         self._flush_starttag()
-        self._write(u"<%s" % unicode(name))
+        self._write(u"<%s" % name)
         for (name, value) in attrs.items():
-            self._write(u" %s=%s" % (unicode(name), quoteattr(value)))
+            self._write(u" %s=%s" % (name, quoteattr(value)))
         self._starttag_pending = True
 
     def endElement(self, name):
@@ -99,7 +99,7 @@ class XMLGenerator(handler.ContentHandler):
             self._write(u"/>")
             self._starttag_pending = False
         else:
-            self._write(u"</%s>" % unicode(name))
+            self._write(u"</%s>" % name)
 
     def startElementNS(self, name, qname, attrs):
         qattrs = {}
@@ -107,7 +107,7 @@ class XMLGenerator(handler.ContentHandler):
             qattrs[self._qname(attname)] = attvalue
         for prefix, uri in self._undeclared_ns_maps:
             if prefix:
-                qattrs[u"xmlns:%s" % unicode(prefix)] = uri
+                qattrs[u"xmlns:%s" % prefix] = uri
             else:
                 qattrs[u"xmlns"] = uri        
         self._undeclared_ns_maps = []    
@@ -125,7 +125,7 @@ class XMLGenerator(handler.ContentHandler):
 
     def processingInstruction(self, target, data):
         self._flush_starttag()
-        self._write(u"<?%s %s?>" % (unicode(target), unicode(data)))
+        self._write(u"<?%s %s?>" % (target, data))
 
 
 class ContentFilter (handler.ContentHandler):

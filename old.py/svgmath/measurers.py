@@ -1,5 +1,6 @@
 """Functions to determine size and position of MathML elements"""
-import sys, math, mathnode, operators, tables, enclosures
+import sys, math
+from . import mathnode, operators, tables, enclosures
 
 # Handy constant to draw fraction bars
 defaultSlope = 1.383
