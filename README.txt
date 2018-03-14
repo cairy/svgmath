@@ -19,3 +19,4 @@ Please send questions, comments, bug reports, and feature requests
 to the author, Nikolai Grigoriev <svgmath@grigoriev.ru>
 
 
+使old.py文件夹中的svgmath适配了Python3，直接使用该部分即可

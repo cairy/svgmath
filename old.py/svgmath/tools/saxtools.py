@@ -1,7 +1,7 @@
 """Miscellaneous SAX-related utilities used in SVGMath"""
 
 from xml.sax import handler
-from .bcodecs import getwriter
+from codecs import getwriter
     
 def escape(data):
     """Escape &, <, and > in a string of data.
